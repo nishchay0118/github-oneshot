@@ -29,10 +29,10 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
-          user: ubuntu
+          username: ubuntu
           key: ${{ secrets.EC2_PEM_KEY }}
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/node-img:v1
             docker stop node-app || true
             docker rm node-app || true
-            docker run -d -it -p 3000:3000 --name=node-app ${{ secrets.DOCKER_USERNAME }}/node-img 
+            docker run -d -it -p 3000:3000 --name=node-app ${{ secrets.DOCKER_USERNAME }}/node-img:v1
