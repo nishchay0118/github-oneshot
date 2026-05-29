@@ -58,3 +58,7 @@ jobs:
             docker stop node-app || true
             docker rm node-app || true
             docker run -d -it -p 3000:3000 --name=node-app ${{ secrets.DOCKER_USERNAME }}/node-img:${{ github.sha }}
+
+            sleep 10
+
+            curl http://localhost:3000/health
