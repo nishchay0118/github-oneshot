@@ -54,6 +54,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PEM_KEY }}
           script: |
+            OLD_IMAGE=$(docker inspect node-app --format='{{.Config.Image}}' 2>/dev/null || true)
+            echo "old image: $OLD_IMAGE"
+
             docker pull ${{ secrets.DOCKER_USERNAME }}/node-img:${{ github.sha }}
             docker stop node-app || true
             docker rm node-app || true
@@ -61,4 +64,20 @@ jobs:
 
             sleep 10
 
-            curl http://localhost:3000/health
+            curl http://localhost:3000/health then,
+             echo " deployment complete"
+            else
+             echo "deployment fail"
+
+             docker stop node-app || true
+             docker rm node-app || true 
+
+             if [ ! -z "$OLD_IMAGE" ]; then
+              echo "rolling back"
+
+              docker run -d -p 3000:3000 --name=node-app $OLD_IMAGE
+
+            fi
+            exit
+         fi
+            
